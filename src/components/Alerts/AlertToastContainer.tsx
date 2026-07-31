@@ -17,11 +17,11 @@ export const AlertToastContainer: React.FC = () => {
     <>
       {/* Floating Toast Container */}
       <div className="fixed bottom-4 right-4 z-40 flex flex-col space-y-2 max-w-sm w-full pointer-events-none px-4 sm:px-0">
-        {toastAlerts.map((item) => {
+        {toastAlerts.map((item, index) => {
           const isPump = item.changePct >= 0;
           return (
             <div
-              key={item.id}
+              key={`${item.id}-${index}`}
               className={`pointer-events-auto p-3.5 rounded-2xl border shadow-xl backdrop-blur-md flex items-start justify-between space-x-3 transition-all animate-bounce-once ${
                 isPump
                   ? 'bg-slate-900/95 border-emerald-500/40 text-emerald-300 shadow-emerald-500/10'
@@ -105,11 +105,11 @@ export const AlertToastContainer: React.FC = () => {
                   </p>
                 </div>
               ) : (
-                alerts.map((item) => {
+                alerts.map((item, index) => {
                   const isPump = item.changePct >= 0;
                   return (
                     <div
-                      key={item.id}
+                      key={`${item.id}-${index}`}
                       className="p-3 rounded-xl bg-slate-800/60 border border-slate-700/50 flex items-center justify-between"
                     >
                       <div className="flex items-center space-x-3">

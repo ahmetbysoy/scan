@@ -23,7 +23,7 @@ export function useMomentumTracker() {
   const soundEnabled = useAppStore((state) => state.soundEnabled);
   const vibrationEnabled = useAppStore((state) => state.vibrationEnabled);
   const addAlert = useAppStore((state) => state.addAlert);
-  const lastAlertTimeouts = useAppStore((state) => state.lastAlertTimeouts);
+  const lastAlertTimeoutsRef = useRef<Record<string, number>>({});
 
   const prevPricesRef = useRef<Record<string, number>>({});
 
@@ -147,14 +147,18 @@ export function useMomentumTracker() {
 
     const now = Date.now();
     const cooldownMs = alertCooldownSec * 1000;
+    const timeouts = lastAlertTimeoutsRef.current;
 
     for (let i = 0; i < processedList.length; i++) {
       const item = processedList[i];
       const absChange = Math.abs(item.selectedChange);
 
       if (absChange >= alertThresholdPct) {
-        const lastTime = lastAlertTimeouts[item.ticker.rawSymbol] || 0;
+        const lastTime = timeouts[item.ticker.rawSymbol] || timeouts[item.ticker.symbol] || 0;
         if (now - lastTime >= cooldownMs) {
+          timeouts[item.ticker.rawSymbol] = now;
+          timeouts[item.ticker.symbol] = now;
+
           const type = item.selectedChange >= 0 ? 'pump' : 'dump';
           
           if (soundEnabled) {
@@ -167,6 +171,7 @@ export function useMomentumTracker() {
           addAlert({
             id: `${item.ticker.rawSymbol}-${now}`,
             symbol: item.ticker.symbol,
+            rawSymbol: item.ticker.rawSymbol,
             price: item.ticker.price,
             changePct: item.selectedChange,
             timeWindow,
@@ -175,7 +180,7 @@ export function useMomentumTracker() {
         }
       }
     }
-  }, [processedList, alertThresholdPct, alertCooldownSec, soundEnabled, vibrationEnabled, timeWindow, addAlert, lastAlertTimeouts]);
+  }, [processedList, alertThresholdPct, alertCooldownSec, soundEnabled, vibrationEnabled, timeWindow, addAlert]);
 
   // Overall Statistics
   const stats = useMemo(() => {

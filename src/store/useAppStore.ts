@@ -16,7 +16,6 @@ interface AppState {
   tickers: Record<string, TickerData>;
   favorites: string[];
   alerts: AlertTriggerEvent[];
-  lastAlertTimeouts: Record<string, number>; // symbol -> timestamp of last alert
 
   // Filters & Controls
   timeWindow: TimeWindow;
@@ -135,7 +134,6 @@ export const useAppStore = create<AppState>((set, get) => ({
   tickers: {},
   favorites: loadInitialFavorites(),
   alerts: [],
-  lastAlertTimeouts: {},
 
   // Filters
   timeWindow: initialSettings.timeWindow || '5m',
@@ -340,16 +338,8 @@ export const useAppStore = create<AppState>((set, get) => ({
         return state;
       }
       const updatedAlerts = [alert, ...state.alerts].slice(0, 50);
-      const symbolKey = alert.symbol;
-      const rawSymbolKey = alert.rawSymbol || alert.symbol;
-      const now = alert.timestamp || Date.now();
       return {
         alerts: updatedAlerts,
-        lastAlertTimeouts: {
-          ...state.lastAlertTimeouts,
-          [symbolKey]: now,
-          [rawSymbolKey]: now,
-        },
       };
     }),
 
