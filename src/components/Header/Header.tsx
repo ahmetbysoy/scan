@@ -13,6 +13,7 @@ import {
   Star,
   Activity,
   X,
+  Server,
 } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { TimeWindow } from '../../types/ticker';
@@ -31,6 +32,7 @@ export const Header: React.FC = () => {
   const setFilterDrawerOpen = useAppStore((state) => state.setFilterDrawerOpen);
   const setSettingsDrawerOpen = useAppStore((state) => state.setSettingsDrawerOpen);
   const setAlertsDrawerOpen = useAppStore((state) => state.setAlertsDrawerOpen);
+  const setDataSourceModalOpen = useAppStore((state) => state.setDataSourceModalOpen);
 
   const alerts = useAppStore((state) => state.alerts);
   const theme = useAppStore((state) => state.theme);
@@ -90,26 +92,35 @@ export const Header: React.FC = () => {
 
           {/* Connection Status Badge & Rate */}
           <div className="flex items-center space-x-1.5 shrink-0">
+            <button
+              onClick={() => setDataSourceModalOpen(true)}
+              title="Veri Kaynakları Test Paneli"
+              className="hidden sm:flex items-center space-x-1 px-2 py-1 bg-slate-900 border border-slate-800 hover:border-emerald-500/40 hover:bg-slate-800 rounded-full text-[11px] text-slate-300 transition-colors"
+            >
+              <Server className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="hidden md:inline font-medium">Veri Testi</span>
+            </button>
+
             {connectionState === 'open' ? (
-              <div className="flex items-center space-x-1.5 px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[11px] text-emerald-400 font-medium">
+              <div className="flex items-center space-x-1 px-2 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[11px] text-emerald-400 font-medium">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
                 <span className="hidden sm:inline">Canlı</span>
                 <span className="text-[10px] text-emerald-500/80 font-mono">
-                  {messagesPerSec}/sn
+                  {messagesPerSec}/s
                 </span>
               </div>
             ) : connectionState === 'connecting' || connectionState === 'reconnecting' ? (
               <div className="flex items-center space-x-1.5 px-2 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-[11px] text-amber-400 font-medium animate-pulse">
                 <RefreshCw className="w-3 h-3 animate-spin" />
-                <span>Bağlanıyor...</span>
+                <span className="text-[10px] sm:text-[11px]">Bağlanıyor...</span>
               </div>
             ) : (
               <div className="flex items-center space-x-1.5 px-2 py-1 bg-rose-500/10 border border-rose-500/20 rounded-full text-[11px] text-rose-400 font-medium">
                 <span className="h-2 w-2 rounded-full bg-rose-500"></span>
-                <span>Kesildi</span>
+                <span className="text-[10px] sm:text-[11px]">Kesildi</span>
               </div>
             )}
 
@@ -117,7 +128,7 @@ export const Header: React.FC = () => {
             <button
               onClick={togglePause}
               title={isPaused ? 'Canlı Akışı Başlat' : 'Canlı Akışı Duraklat'}
-              className={`p-2 rounded-xl border text-xs transition-colors flex items-center justify-center min-w-[36px] min-h-[36px] ${
+              className={`p-1.5 sm:p-2 rounded-xl border text-xs transition-colors flex items-center justify-center min-w-[34px] min-h-[34px] sm:min-w-[36px] sm:min-h-[36px] ${
                 isPaused
                   ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
                   : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'
@@ -129,7 +140,7 @@ export const Header: React.FC = () => {
             {/* Theme Toggle */}
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
+              className="p-1.5 sm:p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition-colors min-w-[34px] min-h-[34px] sm:min-w-[36px] sm:min-h-[36px] flex items-center justify-center"
               title="Temayı Değiştir"
             >
               {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-400" />}
@@ -138,7 +149,7 @@ export const Header: React.FC = () => {
             {/* Alerts Drawer Button */}
             <button
               onClick={() => setAlertsDrawerOpen(true)}
-              className="relative p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
+              className="relative p-1.5 sm:p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition-colors min-w-[34px] min-h-[34px] sm:min-w-[36px] sm:min-h-[36px] flex items-center justify-center"
               title="Uyarı Geçmişi"
             >
               <Bell className="w-4 h-4" />
@@ -149,10 +160,10 @@ export const Header: React.FC = () => {
               )}
             </button>
 
-            {/* Settings Drawer Button */}
+            {/* Settings Drawer Button (desktop only since bottom nav handles it on mobile) */}
             <button
               onClick={() => setSettingsDrawerOpen(true)}
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
+              className="hidden sm:flex p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 transition-colors min-w-[36px] min-h-[36px] items-center justify-center"
               title="Ayarlar"
             >
               <Settings className="w-4 h-4" />

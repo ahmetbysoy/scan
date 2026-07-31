@@ -68,3 +68,14 @@ export interface AlertTriggerEvent {
   timeWindow: TimeWindow;
   timestamp: number;
 }
+
+export interface DiagnosticResult {
+  id: string;
+  name: string;
+  type: 'WebSocket' | 'REST';
+  url: string;
+  status: 'ok' | 'warning' | 'error';
+  latencyMs?: number;
+  itemCount: number;
+  message: string;
+}

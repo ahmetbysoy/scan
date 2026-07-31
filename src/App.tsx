@@ -4,6 +4,7 @@ import { ConnectionStatus } from './components/ConnectionStatus/ConnectionStatus
 import { FilterPanel } from './components/FilterPanel/FilterPanel';
 import { SettingsDrawer } from './components/SettingsDrawer/SettingsDrawer';
 import { AlertToastContainer } from './components/Alerts/AlertToastContainer';
+import { DataSourceModal } from './components/DataSourceModal/DataSourceModal';
 import { CoinListContainer } from './components/CoinList/CoinListContainer';
 import { EmptyState } from './components/EmptyState/EmptyState';
 import { useBinanceSocket } from './hooks/useBinanceSocket';
@@ -17,7 +18,7 @@ export default function App() {
   const tickers = useAppStore((state) => state.tickers);
   const connectionState = useAppStore((state) => state.connectionState);
 
-  const hasTickers = Object.keys(tickers).length > 0;
+  const hasTickers = Object.keys(tickers || {}).length > 0;
 
   return (
     <div className={`min-h-screen flex flex-col font-sans transition-colors ${
@@ -42,6 +43,7 @@ export default function App() {
       <FilterPanel />
       <SettingsDrawer />
       <AlertToastContainer />
+      <DataSourceModal />
 
       {/* Minimalist Footer */}
       <footer className="border-t border-slate-900 bg-slate-950/80 py-3 text-center text-[11px] text-slate-500">

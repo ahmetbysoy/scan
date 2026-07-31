@@ -41,11 +41,11 @@ export const CoinListItemRow: React.FC<CoinListItemRowProps> = React.memo(({ ite
             href={binanceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-center space-x-1.5 min-w-0 font-bold text-white hover:text-emerald-400 transition-colors"
+            className="group flex items-center space-x-1 min-w-0 font-bold text-white hover:text-emerald-400 transition-colors"
           >
-            <span className="text-sm tracking-tight truncate">{item.ticker.symbol}</span>
-            <span className="text-[10px] text-slate-500 font-normal">USDT</span>
-            <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-slate-400" />
+            <span className="text-xs sm:text-sm tracking-tight shrink-0 font-extrabold">{item.ticker.symbol}</span>
+            <span className="text-[10px] text-slate-500 font-normal shrink-0">USDT</span>
+            <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 shrink-0" />
           </a>
         </div>
 

@@ -30,15 +30,15 @@ export const CoinListItemCard: React.FC<CoinListItemCardProps> = React.memo(({ i
             : 'hover:bg-slate-900/90 border-slate-800/80'
         }`}
       >
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2.5">
           {/* Symbol & Favorite Star */}
-          <div className="flex items-center space-x-2.5 min-w-0">
+          <div className="flex items-center space-x-2 min-w-0 flex-1">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 toggleFavorite(item.ticker.rawSymbol);
               }}
-              className="p-2 -m-1 rounded-xl hover:bg-slate-800 text-slate-500 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center shrink-0"
+              className="p-1.5 -m-1 rounded-xl hover:bg-slate-800 text-slate-500 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center shrink-0"
               title={fav ? 'Favorilerden Çıkar' : 'Favorilere Ekle'}
             >
               <Star
@@ -48,25 +48,25 @@ export const CoinListItemCard: React.FC<CoinListItemCardProps> = React.memo(({ i
               />
             </button>
 
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center space-x-1.5">
-                <span className="font-extrabold text-white text-base tracking-tight truncate">
+                <span className="font-black text-white text-sm sm:text-base tracking-tight shrink-0">
                   {item.ticker.symbol}
                 </span>
-                <span className="text-[10px] font-semibold text-slate-400 px-1.5 py-0.2 bg-slate-800 rounded">
+                <span className="text-[10px] font-semibold text-slate-400 px-1.5 py-0.5 bg-slate-800/80 border border-slate-700/50 rounded shrink-0">
                   USDT
                 </span>
               </div>
               <div className="flex items-center space-x-2 text-[11px] text-slate-400 mt-0.5">
-                <span>Hacim: <strong className="text-slate-300 font-mono">{formatVolume(item.ticker.quoteVolume24h)}</strong></span>
+                <span className="truncate">Hacim: <strong className="text-slate-300 font-mono">{formatVolume(item.ticker.quoteVolume24h)}</strong></span>
               </div>
             </div>
           </div>
 
           {/* Price & Momentum Change Badge */}
-          <div className="flex items-center space-x-3 text-right shrink-0">
+          <div className="flex items-center space-x-2 sm:space-x-3 text-right shrink-0">
             <div className="flex flex-col items-end">
-              <span className="font-mono font-bold text-white text-base">
+              <span className="font-mono font-bold text-white text-sm sm:text-base">
                 ${formatPrice(item.ticker.price)}
               </span>
 
@@ -85,7 +85,7 @@ export const CoinListItemCard: React.FC<CoinListItemCardProps> = React.memo(({ i
               href={binanceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={`flex items-center justify-center space-x-1 px-3 py-2 rounded-xl border text-xs font-mono font-extrabold shadow-sm transition-transform active:scale-95 min-w-[80px] min-h-[44px] ${
+              className={`flex items-center justify-center space-x-1 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl border text-xs font-mono font-extrabold shadow-sm transition-transform active:scale-95 min-w-[70px] sm:min-w-[80px] min-h-[38px] sm:min-h-[44px] ${
                 isPositive
                   ? 'bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/30'
                   : 'bg-gradient-to-r from-rose-500/20 to-pink-500/20 border-rose-500/40 text-rose-400 hover:bg-rose-500/30'

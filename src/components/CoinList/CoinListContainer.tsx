@@ -1,7 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import * as ReactWindow from 'react-window';
-
-const List: any = (ReactWindow as any).FixedSizeList || (ReactWindow as any).default?.FixedSizeList || ReactWindow;
+import { List } from 'react-window';
 
 import {
   ArrowUpDown,
@@ -35,14 +33,14 @@ export const CoinListContainer: React.FC = () => {
   const [listHeight, setListHeight] = useState(600);
   const [listWidth, setListWidth] = useState(800);
 
-  // Dynamically calculate virtualized list dimensions
+  // Dynamically calculate virtualized list dimensions with bottom navbar offset
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
-        // Calculate remaining height on viewport
-        const availableHeight = window.innerHeight - rect.top - 16;
-        setListHeight(Math.max(350, availableHeight));
+        // Subtract bottom navbar height (approx 64px) + padding
+        const availableHeight = window.innerHeight - rect.top - 68;
+        setListHeight(Math.max(320, availableHeight));
         setListWidth(rect.width);
       }
     };
@@ -182,16 +180,16 @@ export const CoinListContainer: React.FC = () => {
       )}
 
       {/* Virtualized List View Container */}
-      <div ref={containerRef} className="flex-1 min-h-[400px]">
+      <div ref={containerRef} className="flex-1 min-h-[350px] pb-20 sm:pb-4">
         <List
           height={listHeight}
-          itemCount={processedList.length}
-          itemSize={itemHeight}
           width={listWidth}
+          rowCount={processedList.length}
+          rowHeight={itemHeight}
+          rowComponent={Row}
+          rowProps={{} as any}
           className="scroll-smooth focus:outline-none"
-        >
-          {Row}
-        </List>
+        />
       </div>
     </div>
   );

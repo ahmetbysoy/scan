@@ -30,7 +30,7 @@ export function useMomentumTracker() {
   // Memoized computation of all ticker momentum objects
   const processedList = useMemo(() => {
     const now = Date.now();
-    const rawList = Object.values(tickers);
+    const rawList = Object.values(tickers || {});
     const result: TickerMomentum[] = [];
 
     const query = searchQuery.trim().toLowerCase();

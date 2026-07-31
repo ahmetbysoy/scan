@@ -43,6 +43,12 @@ interface AppState {
   filterDrawerOpen: boolean;
   settingsDrawerOpen: boolean;
   alertsDrawerOpen: boolean;
+  dataSourceModalOpen: boolean;
+  marketStatsModalOpen: boolean;
+
+  // Diagnostics state
+  diagnosticsResults: import('../services/binanceSocket').DiagnosticResult[];
+  isTestingDiagnostics: boolean;
 
   // Socket state
   connectionState: ConnectionState;
@@ -73,6 +79,10 @@ interface AppState {
   setFilterDrawerOpen: (open: boolean) => void;
   setSettingsDrawerOpen: (open: boolean) => void;
   setAlertsDrawerOpen: (open: boolean) => void;
+  setDataSourceModalOpen: (open: boolean) => void;
+  setMarketStatsModalOpen: (open: boolean) => void;
+  setDiagnosticsResults: (results: import('../services/binanceSocket').DiagnosticResult[]) => void;
+  setIsTestingDiagnostics: (testing: boolean) => void;
   setConnectionState: (state: ConnectionState, error?: string | null) => void;
   incrementMessageMetrics: (count: number, rate: number) => void;
   addAlert: (alert: AlertTriggerEvent) => void;
@@ -86,10 +96,14 @@ const STORAGE_SETTINGS_KEY = 'binance_momentum_settings';
 function loadInitialFavorites(): string[] {
   try {
     const data = localStorage.getItem(STORAGE_FAVORITES_KEY);
-    return data ? JSON.parse(data) : ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'];
+    if (data) {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) return parsed;
+    }
   } catch {
-    return ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'];
+    // Ignore error
   }
+  return ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'];
 }
 
 function loadInitialSettings(): Partial<AppState> {
@@ -97,15 +111,17 @@ function loadInitialSettings(): Partial<AppState> {
     const data = localStorage.getItem(STORAGE_SETTINGS_KEY);
     if (data) {
       const parsed = JSON.parse(data);
-      return {
-        timeWindow: parsed.timeWindow || '5m',
-        alertThresholdPct: parsed.alertThresholdPct ?? 3.0,
-        alertCooldownSec: parsed.alertCooldownSec ?? 60,
-        soundEnabled: parsed.soundEnabled ?? true,
-        vibrationEnabled: parsed.vibrationEnabled ?? true,
-        mobileViewMode: parsed.mobileViewMode || 'cards',
-        theme: parsed.theme || 'dark',
-      };
+      if (parsed && typeof parsed === 'object') {
+        return {
+          timeWindow: parsed.timeWindow || '5m',
+          alertThresholdPct: parsed.alertThresholdPct ?? 3.0,
+          alertCooldownSec: parsed.alertCooldownSec ?? 60,
+          soundEnabled: parsed.soundEnabled ?? true,
+          vibrationEnabled: parsed.vibrationEnabled ?? true,
+          mobileViewMode: parsed.mobileViewMode || 'cards',
+          theme: parsed.theme || 'dark',
+        };
+      }
     }
   } catch {
     // Ignore JSON errors
@@ -146,6 +162,12 @@ export const useAppStore = create<AppState>((set, get) => ({
   filterDrawerOpen: false,
   settingsDrawerOpen: false,
   alertsDrawerOpen: false,
+  dataSourceModalOpen: false,
+  marketStatsModalOpen: false,
+
+  // Diagnostics
+  diagnosticsResults: [],
+  isTestingDiagnostics: false,
 
   // Connection
   connectionState: 'connecting',
@@ -297,6 +319,10 @@ export const useAppStore = create<AppState>((set, get) => ({
   setFilterDrawerOpen: (open) => set({ filterDrawerOpen: open }),
   setSettingsDrawerOpen: (open) => set({ settingsDrawerOpen: open }),
   setAlertsDrawerOpen: (open) => set({ alertsDrawerOpen: open }),
+  setDataSourceModalOpen: (open) => set({ dataSourceModalOpen: open }),
+  setMarketStatsModalOpen: (open) => set({ marketStatsModalOpen: open }),
+  setDiagnosticsResults: (results) => set({ diagnosticsResults: results }),
+  setIsTestingDiagnostics: (testing) => set({ isTestingDiagnostics: testing }),
 
   setConnectionState: (connectionState, error = null) =>
     set({ connectionState, lastSocketError: error }),
@@ -338,8 +364,9 @@ export const useAppStore = create<AppState>((set, get) => ({
 
 function saveSettingsToStorage(partial: Record<string, unknown>) {
   try {
-    const existing = JSON.parse(localStorage.getItem(STORAGE_SETTINGS_KEY) || '{}');
-    const updated = { ...existing, ...partial };
+    const raw = localStorage.getItem(STORAGE_SETTINGS_KEY);
+    const existing = raw ? JSON.parse(raw) : {};
+    const updated = { ...(existing && typeof existing === 'object' ? existing : {}), ...partial };
     localStorage.setItem(STORAGE_SETTINGS_KEY, JSON.stringify(updated));
   } catch {
     // Ignore storage errors
