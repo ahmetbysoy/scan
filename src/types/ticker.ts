@@ -63,6 +63,7 @@ export type ConnectionState = 'connecting' | 'open' | 'closed' | 'error' | 'reco
 export interface AlertTriggerEvent {
   id: string;
   symbol: string;
+  rawSymbol?: string;
   price: number;
   changePct: number;
   timeWindow: TimeWindow;

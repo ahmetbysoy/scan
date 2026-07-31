@@ -335,13 +335,20 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   addAlert: (alert) =>
     set((state) => {
-      // Keep max 50 recent alerts
+      // Prevent duplicate alert by ID
+      if (state.alerts.some((a) => a.id === alert.id)) {
+        return state;
+      }
       const updatedAlerts = [alert, ...state.alerts].slice(0, 50);
+      const symbolKey = alert.symbol;
+      const rawSymbolKey = alert.rawSymbol || alert.symbol;
+      const now = alert.timestamp || Date.now();
       return {
         alerts: updatedAlerts,
         lastAlertTimeouts: {
           ...state.lastAlertTimeouts,
-          [alert.symbol]: Date.now(),
+          [symbolKey]: now,
+          [rawSymbolKey]: now,
         },
       };
     }),

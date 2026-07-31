@@ -7,6 +7,8 @@ import { AlertToastContainer } from './components/Alerts/AlertToastContainer';
 import { DataSourceModal } from './components/DataSourceModal/DataSourceModal';
 import { CoinListContainer } from './components/CoinList/CoinListContainer';
 import { EmptyState } from './components/EmptyState/EmptyState';
+import { MobileBottomNav } from './components/Navigation/MobileBottomNav';
+import { MarketStatsDrawer } from './components/Navigation/MarketStatsDrawer';
 import { useBinanceSocket } from './hooks/useBinanceSocket';
 import { useAppStore } from './store/useAppStore';
 
@@ -21,7 +23,7 @@ export default function App() {
   const hasTickers = Object.keys(tickers || {}).length > 0;
 
   return (
-    <div className={`min-h-screen flex flex-col font-sans transition-colors ${
+    <div className={`min-h-screen flex flex-col font-sans transition-colors pb-16 sm:pb-0 ${
       theme === 'light' ? 'bg-slate-100 text-slate-900' : 'bg-slate-950 text-slate-100'
     }`}>
       {/* Top Header */}
@@ -39,14 +41,18 @@ export default function App() {
         )}
       </main>
 
-      {/* Drawers & Toast Containers */}
+      {/* Drawers, Modals & Toast Containers */}
       <FilterPanel />
       <SettingsDrawer />
       <AlertToastContainer />
       <DataSourceModal />
+      <MarketStatsDrawer />
 
-      {/* Minimalist Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950/80 py-3 text-center text-[11px] text-slate-500">
+      {/* Mobile Bottom Navigation Bar */}
+      <MobileBottomNav />
+
+      {/* Minimalist Footer (hidden on small screens to prevent overlap with bottom nav) */}
+      <footer className="hidden sm:block border-t border-slate-900 bg-slate-950/80 py-3 text-center text-[11px] text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <div>
             Binance Futures WebSocket (!miniTicker@arr) Canlı Piyasa Tarayıcısı
