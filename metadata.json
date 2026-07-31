@@ -1,0 +1,6 @@
+{
+  "name": "Binance Futures Momentum Tarayıcı",
+  "description": "Binance Futures tüm USDT pariteleri için canlı WebSocket momentum, pump/dump ve hacim tarayıcısı.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
