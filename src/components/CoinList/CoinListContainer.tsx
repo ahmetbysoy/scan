@@ -10,11 +10,14 @@ import {
   BarChart2,
   Trophy,
   Flame,
+  Download,
+  Sparkles,
 } from 'lucide-react';
 import { useMomentumTracker } from '../../hooks/useMomentumTracker';
 import { useAppStore } from '../../store/useAppStore';
 import { SortField, TickerMomentum } from '../../types/ticker';
 import { formatPercent, formatVolume } from '../../utils/formatters';
+import { exportTickersToCSV } from '../../utils/export';
 import { CoinListItemCard } from './CoinListItemCard';
 import { CoinListItemRow } from './CoinListItemRow';
 import { EmptyState } from '../EmptyState/EmptyState';
@@ -156,6 +159,46 @@ export const CoinListContainer: React.FC = () => {
             </span>
           </div>
         </div>
+      </div>
+
+      {/* Quick Action Bar: Export CSV & Presets */}
+      <div className="flex flex-wrap items-center justify-between gap-2 bg-slate-900/60 p-2 rounded-xl border border-slate-800/60 text-xs">
+        <div className="flex items-center space-x-1.5 overflow-x-auto">
+          <span className="text-slate-400 font-medium text-[11px] px-1">Hızlı Filtre:</span>
+          <button
+            onClick={() => useAppStore.setState({ positiveOnly: true, minChangePct: 2 })}
+            className="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 hover:bg-emerald-500/20 font-medium transition-colors whitespace-nowrap"
+          >
+            🚀 Pumplar (&gt;+2%)
+          </button>
+          <button
+            onClick={() => useAppStore.setState({ positiveOnly: false, minChangePct: 2 })}
+            className="px-2.5 py-1 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300 hover:bg-rose-500/20 font-medium transition-colors whitespace-nowrap"
+          >
+            🔻 Dumplar (&lt;-2%)
+          </button>
+          <button
+            onClick={() => useAppStore.setState({ minVolume: 50000000, minChangePct: 0, positiveOnly: false })}
+            className="px-2.5 py-1 rounded-lg bg-teal-500/10 border border-teal-500/20 text-teal-300 hover:bg-teal-500/20 font-medium transition-colors whitespace-nowrap"
+          >
+            📊 Yüksek Hacim (&gt;$50M)
+          </button>
+          <button
+            onClick={() => useAppStore.setState({ minChangePct: 0, minPrice: 0, minVolume: 0, positiveOnly: false, searchQuery: '', onlyFavorites: false })}
+            className="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 font-medium transition-colors whitespace-nowrap"
+          >
+            🔄 Sıfırla
+          </button>
+        </div>
+
+        <button
+          onClick={() => exportTickersToCSV(processedList, timeWindow)}
+          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-medium transition-colors shadow-sm ml-auto"
+          title="Filtrelenen Listeyi CSV Olarak İndir"
+        >
+          <Download className="w-3.5 h-3.5 text-emerald-400" />
+          <span>CSV İndir</span>
+        </button>
       </div>
 
       {/* Sorting bar for Cards view or Table Header for Table view */}
